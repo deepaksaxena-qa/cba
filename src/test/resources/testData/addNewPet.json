@@ -1,0 +1,13 @@
+{
+  "id": 1011,
+  "name": "Fluffy",
+  "status": "available",
+  "category": {
+    "id": 10,
+    "name": "Dogs"
+  },
+  "photoUrls": ["https://example.com/photo1"],
+  "tags": [
+    {"id": 10, "name": "cute"}
+  ]
+}
