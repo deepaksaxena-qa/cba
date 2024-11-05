@@ -3,9 +3,9 @@
     <test name="PetStore API Tests">
         <classes>
             <class name="com.example.petstore.tests.AddPetTest"/>
+            <class name="com.example.petstore.tests.UpdatePetTest"/>
             <class name="com.example.petstore.tests.GetPetByIdTest"/>
             <class name="com.example.petstore.tests.DeletePetTest"/>
-            <class name="com.example.petstore.tests.FindPetsByStatusTest"/>
         </classes>
     </test>
 </suite>

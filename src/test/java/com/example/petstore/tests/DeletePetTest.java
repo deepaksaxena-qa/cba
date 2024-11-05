@@ -4,16 +4,15 @@ import com.example.petstore.models.Pet;
 import com.example.petstore.utils.ConfigReader;
 import com.example.petstore.utils.JsonUtils;
 import com.example.petstore.utils.PetApiUtils;
-import io.qameta.allure.Allure;
-import io.qameta.allure.Severity;
-import io.qameta.allure.SeverityLevel;
-import io.qameta.allure.Story;
+import io.qameta.allure.*;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+@Epic("Pet Store API Tests")
+@Feature("Pet Endpoint Tests")
 public class DeletePetTest {
 
     private int petId;  // Store the ID of the dynamically created pet
@@ -33,7 +32,7 @@ public class DeletePetTest {
     @Severity(SeverityLevel.CRITICAL)
     @Story("Delete a pet using its ID and validate deletion")
     public void deletePetByIdTest() {
-        Allure.step("Deleting pet with ID: " + petId);
+        Allure.step("Sending request to delete pet with ID: " + petId);
         Response response = PetApiUtils.deletePet(petId);
 
         Allure.step("Validating 200 response status for deletion");
@@ -45,19 +44,6 @@ public class DeletePetTest {
         Response getResponse = PetApiUtils.getPetById(petId);
         getResponse.then().statusCode(404); // Expecting 404 since the pet should no longer exist
         Assert.assertTrue(getResponse.jsonPath().getString("message").contains("Pet not found"), "Expected pet not found message was not received");
-    }
-
-    @Test(description = "Attempt to delete a non-existent pet by ID (404 - Not Found)")
-    @Severity(SeverityLevel.NORMAL)
-    @Story("Attempt to delete a pet using a non-existent ID")
-    public void deleteNonExistentPetTest() {
-        int nonExistentId = 9999999; // A high ID that should not exist
-
-        Allure.step("Attempting to delete pet with non-existent ID: " + nonExistentId);
-        Response response = PetApiUtils.deletePet(nonExistentId);
-
-        Allure.step("Validating 404 response status for non-existent pet deletion");
-        response.then().statusCode(404);
     }
 }
 

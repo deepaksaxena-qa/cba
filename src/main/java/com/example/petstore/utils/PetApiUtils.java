@@ -1,12 +1,14 @@
 package com.example.petstore.utils;
 
 import com.example.petstore.models.Pet;
-import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 
 import static io.restassured.RestAssured.given;
+import io.qameta.allure.restassured.AllureRestAssured;
+
+import java.io.File;
 
 public class PetApiUtils {
 
@@ -53,4 +55,21 @@ public class PetApiUtils {
                 .when()
                 .get("/pet/findByStatus");
     }
+
+    public static Response updatePet(Pet pet) {
+        return given()
+                .contentType(ContentType.JSON)
+                .body(pet)
+                .when()
+                .put("/pet");
+    }
+
+    public static Response uploadPetImage(int petId, File imageFile) {
+        return RestAssured.given()
+                .contentType("multipart/form-data")
+                .multiPart("file", imageFile)
+                .pathParam("petId", petId)
+                .post("/pet/{petId}/uploadImage");
+    }
+
 }

@@ -1,0 +1,14 @@
+{
+  "id": 1020,
+  "name": "Poppy",
+  "status": "sold",
+  "category": {
+    "id": 20,
+    "name": "Cats"
+  },
+  "photoUrls": ["http://example.com/photo1", "http://example.com/photo2"],
+  "tags": [
+    { "id": 1, "name": "friendly" },
+    { "id": 2, "name": "playful" }
+  ]
+}

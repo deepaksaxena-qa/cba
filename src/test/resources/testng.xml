@@ -1,0 +1,15 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="AllTestsSuite" parallel="false">
+
+    <test name="PetStoreAPITests">
+        <classes>
+            <class name="com.example.petstore.tests.AddPetTest" />
+            <class name="com.example.petstore.tests.GetPetByIdTest" />
+            <class name="com.example.petstore.tests.DeletePetTest" />
+            <class name="com.example.petstore.tests.UpdatePetTest" />
+            <class name="com.example.petstore.tests.FindPetsByStatusTest" />
+            <class name="com.example.petstore.tests.UploadPetImageTest" />
+        </classes>
+    </test>
+
+</suite>

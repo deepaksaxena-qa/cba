@@ -32,7 +32,7 @@ jobs:
         run: mvn install -DskipTests
 
       - name: Run Tests
-        run: mvn clean test
+        run: mvn clean test -P regression-suite
 
       - name: Generate Allure Report
         if: always()

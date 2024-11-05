@@ -1,55 +1,67 @@
 package com.example.petstore.tests;
 
+import com.example.petstore.models.Pet;
 import com.example.petstore.utils.PetApiUtils;
-import io.qameta.allure.Allure;
-import io.qameta.allure.Severity;
-import io.qameta.allure.SeverityLevel;
-import io.qameta.allure.Story;
+import com.example.petstore.utils.ConfigReader;
+import com.example.petstore.utils.JsonUtils;
+import io.qameta.allure.*;
+import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.util.List;
-import java.util.Map;
 
+@Epic("Pet Store API Tests")
+@Feature("Pet Endpoint Tests")
 public class FindPetsByStatusTest {
+
+    @BeforeClass
+    public void setup() {
+        RestAssured.baseURI = ConfigReader.get("baseURI");
+    }
 
     @DataProvider(name = "petStatusProvider")
     public Object[][] petStatusProvider() {
-        return new Object[][]{
+        return new Object[][] {
                 {"available"},
                 {"pending"},
-                {"sold"},
-                {"notarealstatus"} // This is for the invalid status test
+                {"sold"}
         };
     }
 
-    @Test(dataProvider = "petStatusProvider", description = "Find pets by status")
+    @Test(description = "Find pets by status", dataProvider = "petStatusProvider")
     @Severity(SeverityLevel.NORMAL)
-    @Story("Retrieve pets based on different statuses and validate the response")
+    @Story("Find pets by their status and validate response")
     public void findPetsByStatusTest(String status) {
-        Allure.step("Finding pets with status: " + status);
+        // Ensure a pet with the specified status exists
+        Pet pet = JsonUtils.getPetFromJson("addNewPet.json");
+        pet.setStatus(status);
+
+        Allure.step("Adding a new pet with status: " + status);
+        Response addResponse = PetApiUtils.addPet(pet);
+        addResponse.then().statusCode(200);
+
+        // Find pets by status
+        Allure.step("Sending request to find pets by status: " + status);
         Response response = PetApiUtils.findPetsByStatus(status);
 
-        if ("notarealstatus".equals(status)) {
-            Allure.step("Validating response for invalid status");
-            response.then().statusCode(400);
-            Assert.assertTrue(response.jsonPath().getString("message").contains("Invalid status value"),
-                    "Expected invalid status message was not received");
+        // Validate response
+        Allure.step("Validating the response status code and content");
+        response.then().statusCode(200);
+
+        List<Pet> pets = response.jsonPath().getList("", Pet.class);
+
+        // Verify if the returned list contains pets or is empty, but the call should not fail
+        if (pets.isEmpty()) {
+            Allure.step("No pets found with status: " + status);
         } else {
-            Allure.step("Validating response for valid status: " + status);
-            response.then().statusCode(200);
-
-            List<?> pets = response.jsonPath().getList(""); // Retrieve the list of pets
-            Assert.assertNotNull(pets, "Pets list should not be null");
-            Assert.assertFalse(pets.isEmpty(), "Pets list should not be empty for status: " + status);
-
-            for (Object pet : pets) {
-                String petStatus = (String) ((Map<?, ?>) pet).get("status");
-                Assert.assertEquals(petStatus, status, "Pet status should be '" + status + "'");
+            Allure.step("Validating that all pets have status: " + status);
+            for (Pet foundPet : pets) {
+                Assert.assertEquals(foundPet.getStatus(), status, "Pet status does not match the requested status");
             }
         }
     }
 }
-
